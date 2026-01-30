@@ -6,7 +6,7 @@ TOKEN_FILE=$DATA_DIR/.gateway-token
 ONBOARD_MARKER=$DATA_DIR/.onboarded
 
 # Read port from addon config
-PORT=$(bashio::config 'port')
+PORT=$(jq -r '.port // 3000' /data/options.json)
 
 # Create persistent directories
 mkdir -p $DATA_DIR
