@@ -47,11 +47,11 @@ if [ ! -f "$ONBOARD_MARKER" ]; then
     chown openclaw:openclaw "$ONBOARD_MARKER"
 fi
 
-# Update config with trusted proxies (merge with existing config)
+# Update config with trusted proxies and reverse proxy settings (merge with existing config)
 if [ -f "$CONFIG_FILE" ]; then
-    # Add trustedProxies to existing config using jq if available, otherwise Python
+    # Add trustedProxies, bind, and allowInsecureAuth for reverse proxy support
     if command -v jq &> /dev/null; then
-        jq '.gateway.trustedProxies = ["192.168.199.20", "172.18.0.1", "172.17.0.1", "172.30.32.1", "127.0.0.1"] | .gateway.bind = "lan"' "$CONFIG_FILE" > "$CONFIG_FILE.tmp" && mv "$CONFIG_FILE.tmp" "$CONFIG_FILE"
+        jq '.gateway.trustedProxies = ["192.168.199.20", "172.18.0.1", "172.17.0.1", "172.30.32.1", "127.0.0.1"] | .gateway.bind = "lan" | .gateway.controlUi.allowInsecureAuth = true' "$CONFIG_FILE" > "$CONFIG_FILE.tmp" && mv "$CONFIG_FILE.tmp" "$CONFIG_FILE"
     else
         python3 -c "
 import json
@@ -60,6 +60,8 @@ with open('$CONFIG_FILE', 'r') as f:
 cfg.setdefault('gateway', {})
 cfg['gateway']['trustedProxies'] = ['192.168.199.20', '172.18.0.1', '172.17.0.1', '172.30.32.1', '127.0.0.1']
 cfg['gateway']['bind'] = 'lan'
+cfg['gateway'].setdefault('controlUi', {})
+cfg['gateway']['controlUi']['allowInsecureAuth'] = True
 with open('$CONFIG_FILE', 'w') as f:
     json.dump(cfg, f, indent=2)
 "
