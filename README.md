@@ -1,42 +1,30 @@
-# OpenClaw Home Assistant Addon
+# OpenClaw Home Assistant Add-on
 
-Personal AI assistant gateway with multi-channel support (Telegram, Discord, etc.).
+Personal AI assistant gateway.
 
 ## Installation
 
-1. Add this repository to your Home Assistant addon store
-2. Install the OpenClaw addon
-3. Start the addon
-4. Open the Dashboard at `http://homeassistant:18789`
-5. Complete the onboarding (API keys, channels, etc.)
+1. Repository zu Home Assistant hinzufügen
+2. OpenClaw Add-on installieren
+3. Add-on starten
+4. **Einmaliges Setup:** Terminal öffnen und `su openclaw -c "clawdbot onboard"` ausführen
+5. Add-on neu starten
 
-## Features
+## Konfiguration
 
-- Multi-channel AI assistant (Telegram, Discord, etc.)
-- Web Dashboard for configuration
-- Persistent storage in `/share/openclaw/`
+| Option | Standard | Beschreibung |
+|--------|----------|--------------|
+| port   | 3008     | Gateway-Port |
 
-## Configuration
+Alle weiteren Einstellungen (API-Keys, Auth, Channels) konfigurierst du direkt in Clawdbot beim Onboarding oder später über die Web-UI.
 
-All configuration is done through the OpenClaw Dashboard - no Home Assistant options needed.
+## Zugang
 
-Access the dashboard after starting the addon:
-- Check the addon logs for the **Dashboard URL with token**
-- Format: `http://homeassistant.local:18789/?token=YOUR_TOKEN`
-- The token is auto-generated on first start and persists across restarts
+Nach dem Onboarding erreichbar unter:
+- `http://<deine-ha-ip>:3008`
 
-## Data Persistence
+Für externen Zugang empfohlen: Reverse Proxy (z.B. Nginx Proxy Manager) mit eigener Auth davor.
 
-All data is stored in `/share/openclaw/`:
-- Configuration
-- Credentials
-- Session data
-- Workspace files
+## Daten
 
-## Local Development
-
-```bash
-docker-compose up --build
-```
-
-Then open `http://localhost:18789` to access the dashboard.
+Persistent in `/share/openclaw/` - bleibt bei Updates erhalten.
