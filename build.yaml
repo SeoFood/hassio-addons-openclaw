@@ -1,0 +1,4 @@
+build_from:
+  amd64: "node:22-alpine"
+args:
+  BUILD_VERSION: "1.0.0"
