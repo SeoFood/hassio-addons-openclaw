@@ -32,6 +32,19 @@ export HOME=/home/openclaw
 export CLAWDBOT_STATE_DIR=$DATA_DIR
 export CLAWDBOT_GATEWAY_TOKEN=$GATEWAY_TOKEN
 
+# Create clawdbot config with trusted proxies (for reverse proxy support)
+CONFIG_FILE=$DATA_DIR/clawdbot.json
+if [ ! -f "$CONFIG_FILE" ]; then
+    cat > "$CONFIG_FILE" << 'CONFIGJSON'
+{
+  "gateway": {
+    "trustedProxies": ["192.168.0.0/16", "172.16.0.0/12", "10.0.0.0/8"]
+  }
+}
+CONFIGJSON
+    chown openclaw:openclaw "$CONFIG_FILE"
+fi
+
 # Chromium settings for headless operation
 export PUPPETEER_SKIP_CHROMIUM_DOWNLOAD=true
 export PUPPETEER_EXECUTABLE_PATH=/usr/bin/chromium-browser
