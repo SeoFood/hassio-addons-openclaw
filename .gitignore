@@ -1,0 +1,23 @@
+# Dependencies
+node_modules/
+
+# Build artifacts
+*.log
+*.tmp
+
+# OS files
+.DS_Store
+Thumbs.db
+
+# IDE
+.idea/
+.vscode/
+*.swp
+*.swo
+
+# Docker
+.docker/
+
+# Local development
+.env
+.env.local

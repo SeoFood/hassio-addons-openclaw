@@ -1,0 +1,16 @@
+name: "OpenClaw"
+description: "Personal AI assistant gateway with multi-channel support"
+version: "1.0.0"
+slug: "openclaw"
+arch:
+  - amd64
+init: false
+host_network: true
+ports:
+  18789/tcp: 18789
+ports_description:
+  18789/tcp: "OpenClaw Gateway & Dashboard"
+map:
+  - share:rw
+options: {}
+schema: {}

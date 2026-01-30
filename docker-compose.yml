@@ -1,0 +1,17 @@
+services:
+  openclaw:
+    build:
+      context: .
+      dockerfile: Dockerfile
+      args:
+        BUILD_FROM: node:22-alpine
+    ports:
+      - "18789:18789"
+    volumes:
+      - openclaw_data:/share/openclaw
+    environment:
+      - CLAWDBOT_STATE_DIR=/share/openclaw
+    restart: unless-stopped
+
+volumes:
+  openclaw_data:
