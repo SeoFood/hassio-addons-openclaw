@@ -7,8 +7,8 @@ Personal AI assistant gateway.
 1. Repository zu Home Assistant hinzufügen
 2. OpenClaw Add-on installieren
 3. Add-on starten
-4. **Einmaliges Setup:** Terminal öffnen und `su openclaw -c "clawdbot onboard"` ausführen
-5. Add-on neu starten
+4. Web-UI öffnen unter `http://<deine-ha-ip>:3008`
+5. Onboarding in der Web-UI durchführen
 
 ## Konfiguration
 

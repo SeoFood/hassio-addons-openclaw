@@ -22,15 +22,6 @@ export CLAWDBOT_STATE_DIR=$DATA_DIR
 export PUPPETEER_SKIP_CHROMIUM_DOWNLOAD=true
 export PUPPETEER_EXECUTABLE_PATH=/usr/bin/chromium-browser
 
-# Prüfen ob bereits onboarded
-if [ ! -f "$DATA_DIR/clawdbot.json" ]; then
-    echo "=========================================="
-    echo "Erster Start - Onboarding erforderlich!"
-    echo "Verbinde dich per Terminal und führe aus:"
-    echo "  su openclaw -c \"clawdbot onboard\""
-    echo "=========================================="
-    sleep infinity
-fi
-
-# Gateway starten
+# Gateway starten (Onboarding läuft über Web-UI)
+echo "Starting OpenClaw Gateway on port $PORT..."
 exec su openclaw -c "clawdbot gateway --bind lan --port $PORT"

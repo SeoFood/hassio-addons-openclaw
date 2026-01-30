@@ -1,11 +1,10 @@
 name: "OpenClaw"
 description: "Personal AI assistant gateway"
-version: "1.0.0"
+version: "1.0.1"
 slug: "openclaw"
 arch:
   - amd64
 init: false
-stdin: true
 host_network: true
 map:
   - share:rw
