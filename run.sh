@@ -32,18 +32,22 @@ export HOME=/home/openclaw
 export CLAWDBOT_STATE_DIR=$DATA_DIR
 export CLAWDBOT_GATEWAY_TOKEN=$GATEWAY_TOKEN
 
-# Create clawdbot config with trusted proxies (for reverse proxy support)
+# Create/update clawdbot config with trusted proxies (for reverse proxy support)
+# Using specific IPs: NGX Proxy Manager and Docker networks
 CONFIG_FILE=$DATA_DIR/clawdbot.json
-if [ ! -f "$CONFIG_FILE" ]; then
-    cat > "$CONFIG_FILE" << 'CONFIGJSON'
+cat > "$CONFIG_FILE" << 'CONFIGJSON'
 {
   "gateway": {
-    "trustedProxies": ["192.168.0.0/16", "172.16.0.0/12", "10.0.0.0/8"]
+    "trustedProxies": [
+      "192.168.199.20",
+      "172.18.0.1",
+      "172.17.0.1",
+      "127.0.0.1"
+    ]
   }
 }
 CONFIGJSON
-    chown openclaw:openclaw "$CONFIG_FILE"
-fi
+chown openclaw:openclaw "$CONFIG_FILE"
 
 # Chromium settings for headless operation
 export PUPPETEER_SKIP_CHROMIUM_DOWNLOAD=true
