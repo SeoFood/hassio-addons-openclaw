@@ -1,5 +1,5 @@
-ARG BUILD_FROM=node:22-alpine
-FROM ${BUILD_FROM}
+ARG BUILD_FROM
+FROM node:22-alpine
 
 # Cache breaker - change this to force rebuild
 ARG BUILD_VERSION=1.0.0
