@@ -2,7 +2,6 @@ name: "OpenClaw"
 description: "Personal AI assistant gateway with multi-channel support"
 version: "1.0.0"
 slug: "openclaw"
-image: "ghcr.io/seofood/openclaw"
 arch:
   - amd64
 init: false
