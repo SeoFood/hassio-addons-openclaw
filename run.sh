@@ -50,7 +50,6 @@ echo ""
 echo "Complete setup via the Dashboard (API keys, channels, etc.)"
 
 # Start gateway with dashboard
-# --bind lan: Listen on all interfaces
-# --port 18789: Use configured port
+# --bind lan: Listen on all interfaces (host_network mode)
 # --allow-unconfigured: Allow starting without prior configuration (for onboarding)
 exec su openclaw -c "CLAWDBOT_GATEWAY_TOKEN='$GATEWAY_TOKEN' clawdbot gateway --bind lan --port 18789 --allow-unconfigured"
