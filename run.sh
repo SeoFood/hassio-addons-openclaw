@@ -5,6 +5,9 @@ DATA_DIR=/share/openclaw
 TOKEN_FILE=$DATA_DIR/.gateway-token
 ONBOARD_MARKER=$DATA_DIR/.onboarded
 
+# Read port from addon config
+PORT=$(bashio::config 'port')
+
 # Create persistent directories
 mkdir -p $DATA_DIR
 
@@ -40,7 +43,7 @@ export CHROME_BIN=/usr/bin/chromium-browser
 # First-time onboarding
 if [ ! -f "$ONBOARD_MARKER" ]; then
     echo "First start - running initial onboarding..."
-    su openclaw -c "clawdbot onboard --non-interactive --accept-risk --auth-choice skip --skip-channels --skip-skills --skip-health --skip-ui --gateway-bind lan --gateway-port 3000" || true
+    su openclaw -c "clawdbot onboard --non-interactive --accept-risk --auth-choice skip --skip-channels --skip-skills --skip-health --skip-ui --gateway-bind lan --gateway-port $PORT" || true
     touch "$ONBOARD_MARKER"
     chown openclaw:openclaw "$ONBOARD_MARKER"
 fi
@@ -52,8 +55,8 @@ echo "=========================================="
 echo "Gateway Token: $GATEWAY_TOKEN"
 echo "=========================================="
 echo ""
-echo "Access: http://<your-homeassistant-ip>:3000"
+echo "Access: http://<your-homeassistant-ip>:$PORT"
 echo ""
 
 # Start gateway
-exec su openclaw -c "CLAWDBOT_GATEWAY_TOKEN='$GATEWAY_TOKEN' clawdbot gateway --bind lan --port 3000"
+exec su openclaw -c "CLAWDBOT_GATEWAY_TOKEN='$GATEWAY_TOKEN' clawdbot gateway --bind lan --port $PORT"

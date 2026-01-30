@@ -1,6 +1,6 @@
 name: "OpenClaw"
 description: "Personal AI assistant gateway with multi-channel support"
-version: "1.1.0"
+version: "1.1.1"
 slug: "openclaw"
 arch:
   - amd64
@@ -10,5 +10,7 @@ panel_icon: "mdi:robot"
 panel_title: "OpenClaw"
 map:
   - share:rw
-options: {}
-schema: {}
+options:
+  port: 3000
+schema:
+  port: int
