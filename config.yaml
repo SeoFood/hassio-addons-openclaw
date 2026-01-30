@@ -1,6 +1,6 @@
 name: "OpenClaw"
 description: "Personal AI assistant gateway with multi-channel support"
-version: "1.1.2"
+version: "1.2.0"
 slug: "openclaw"
 arch:
   - amd64
@@ -12,5 +12,8 @@ map:
   - share:rw
 options:
   port: 3000
+  trusted_proxies: []
 schema:
   port: int
+  trusted_proxies:
+    - str
