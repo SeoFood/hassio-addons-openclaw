@@ -24,4 +24,4 @@ export PUPPETEER_EXECUTABLE_PATH=/usr/bin/chromium-browser
 
 # Gateway starten (Onboarding läuft über Web-UI)
 echo "Starting OpenClaw Gateway on port $PORT..."
-exec su openclaw -c "clawdbot gateway --bind lan --port $PORT"
+exec su openclaw -c "clawdbot gateway --bind lan --port $PORT --allow-unconfigured"
