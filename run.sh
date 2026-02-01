@@ -32,12 +32,23 @@ TRUSTED_PROXIES=$(jq -c '.trusted_proxies // []' /data/options.json)
 # Add Home Assistant Supervisor proxy network to trusted proxies
 TRUSTED_PROXIES=$(echo "$TRUSTED_PROXIES" | jq '. + ["172.30.32.0/23"]')
 
-# Create/update config with trusted proxies
+# Get ingress path from Supervisor API
+INGRESS_ENTRY=""
+if [ -n "$SUPERVISOR_TOKEN" ]; then
+    INGRESS_ENTRY=$(curl -s http://supervisor/addons/self/info \
+        -H "Authorization: Bearer $SUPERVISOR_TOKEN" | jq -r '.data.ingress_entry // empty')
+    echo "Ingress path: $INGRESS_ENTRY"
+fi
+
+# Create/update config with trusted proxies and basePath
 if [ ! -f "$CONFIG_FILE" ]; then
-    jq -n --argjson proxies "$TRUSTED_PROXIES" '{gateway: {trustedProxies: $proxies, controlUi: {allowInsecureAuth: true}}}' > "$CONFIG_FILE"
+    jq -n --argjson proxies "$TRUSTED_PROXIES" --arg basePath "$INGRESS_ENTRY" \
+        '{gateway: {trustedProxies: $proxies, controlUi: {allowInsecureAuth: true, basePath: $basePath}}}' > "$CONFIG_FILE"
     chown openclaw:openclaw "$CONFIG_FILE"
 else
-    jq --argjson proxies "$TRUSTED_PROXIES" '.gateway.trustedProxies = $proxies | .gateway.controlUi.allowInsecureAuth = true' "$CONFIG_FILE" > "$CONFIG_FILE.tmp" && mv "$CONFIG_FILE.tmp" "$CONFIG_FILE"
+    jq --argjson proxies "$TRUSTED_PROXIES" --arg basePath "$INGRESS_ENTRY" \
+        '.gateway.trustedProxies = $proxies | .gateway.controlUi.allowInsecureAuth = true | .gateway.controlUi.basePath = $basePath' \
+        "$CONFIG_FILE" > "$CONFIG_FILE.tmp" && mv "$CONFIG_FILE.tmp" "$CONFIG_FILE"
     chown openclaw:openclaw "$CONFIG_FILE"
 fi
 
