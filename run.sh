@@ -26,22 +26,15 @@ else
     chown openclaw:openclaw "$TOKEN_FILE"
 fi
 
-# Create minimal config with trusted proxies if not exists
+# Read trusted proxies from addon options
+TRUSTED_PROXIES=$(jq -c '.trusted_proxies // ["172.16.0.0/12", "192.168.0.0/16", "10.0.0.0/8"]' /data/options.json)
+
+# Create/update config with trusted proxies from addon options
 if [ ! -f "$CONFIG_FILE" ]; then
-    cat > "$CONFIG_FILE" << EOF
-{
-  "gateway": {
-    "trustedProxies": ["172.16.0.0/12", "192.168.0.0/16", "10.0.0.0/8"],
-    "controlUi": {
-      "allowInsecureAuth": true
-    }
-  }
-}
-EOF
+    jq -n --argjson proxies "$TRUSTED_PROXIES" '{gateway: {trustedProxies: $proxies, controlUi: {allowInsecureAuth: true}}}' > "$CONFIG_FILE"
     chown openclaw:openclaw "$CONFIG_FILE"
 else
-    # Update existing config with trusted proxies
-    jq '.gateway.trustedProxies = ["172.16.0.0/12", "192.168.0.0/16", "10.0.0.0/8"] | .gateway.controlUi.allowInsecureAuth = true' "$CONFIG_FILE" > "$CONFIG_FILE.tmp" && mv "$CONFIG_FILE.tmp" "$CONFIG_FILE"
+    jq --argjson proxies "$TRUSTED_PROXIES" '.gateway.trustedProxies = $proxies | .gateway.controlUi.allowInsecureAuth = true' "$CONFIG_FILE" > "$CONFIG_FILE.tmp" && mv "$CONFIG_FILE.tmp" "$CONFIG_FILE"
     chown openclaw:openclaw "$CONFIG_FILE"
 fi
 
