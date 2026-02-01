@@ -6,7 +6,7 @@ TOKEN_FILE=$DATA_DIR/.gateway-token
 CONFIG_FILE=$DATA_DIR/clawdbot.json
 
 # Read port from addon options
-PORT=$(jq -r '.port // 3008' /data/options.json)
+PORT=$(jq -r '.port // 18789' /data/options.json)
 
 # Create persistent directory
 mkdir -p $DATA_DIR
