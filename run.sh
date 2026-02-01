@@ -40,14 +40,14 @@ if [ -n "$SUPERVISOR_TOKEN" ]; then
     echo "Ingress path: $INGRESS_ENTRY"
 fi
 
-# Create/update config with trusted proxies and basePath
+# Create/update config with trusted proxies
 if [ ! -f "$CONFIG_FILE" ]; then
-    jq -n --argjson proxies "$TRUSTED_PROXIES" --arg basePath "$INGRESS_ENTRY" \
-        '{gateway: {trustedProxies: $proxies, controlUi: {allowInsecureAuth: true, basePath: $basePath}}}' > "$CONFIG_FILE"
+    jq -n --argjson proxies "$TRUSTED_PROXIES" \
+        '{gateway: {trustedProxies: $proxies, controlUi: {allowInsecureAuth: true}}}' > "$CONFIG_FILE"
     chown openclaw:openclaw "$CONFIG_FILE"
 else
-    jq --argjson proxies "$TRUSTED_PROXIES" --arg basePath "$INGRESS_ENTRY" \
-        '.gateway.trustedProxies = $proxies | .gateway.controlUi.allowInsecureAuth = true | .gateway.controlUi.basePath = $basePath' \
+    jq --argjson proxies "$TRUSTED_PROXIES" \
+        '.gateway.trustedProxies = $proxies | .gateway.controlUi.allowInsecureAuth = true | del(.gateway.controlUi.basePath)' \
         "$CONFIG_FILE" > "$CONFIG_FILE.tmp" && mv "$CONFIG_FILE.tmp" "$CONFIG_FILE"
     chown openclaw:openclaw "$CONFIG_FILE"
 fi
