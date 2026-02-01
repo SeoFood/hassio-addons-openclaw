@@ -5,8 +5,8 @@ DATA_DIR=/share/openclaw
 TOKEN_FILE=$DATA_DIR/.gateway-token
 CONFIG_FILE=$DATA_DIR/clawdbot.json
 
-# Read port from addon options
-PORT=$(jq -r '.port // 18789' /data/options.json)
+# Port is fixed for ingress
+PORT=18789
 
 # Create persistent directory
 mkdir -p $DATA_DIR
@@ -26,10 +26,13 @@ else
     chown openclaw:openclaw "$TOKEN_FILE"
 fi
 
-# Read trusted proxies from addon options
-TRUSTED_PROXIES=$(jq -c '.trusted_proxies // ["172.16.0.0/12", "192.168.0.0/16", "10.0.0.0/8"]' /data/options.json)
+# Read trusted proxies from addon options (default: empty)
+TRUSTED_PROXIES=$(jq -c '.trusted_proxies // []' /data/options.json)
 
-# Create/update config with trusted proxies from addon options
+# Add Home Assistant Supervisor proxy network to trusted proxies
+TRUSTED_PROXIES=$(echo "$TRUSTED_PROXIES" | jq '. + ["172.30.32.0/23"]')
+
+# Create/update config with trusted proxies
 if [ ! -f "$CONFIG_FILE" ]; then
     jq -n --argjson proxies "$TRUSTED_PROXIES" '{gateway: {trustedProxies: $proxies, controlUi: {allowInsecureAuth: true}}}' > "$CONFIG_FILE"
     chown openclaw:openclaw "$CONFIG_FILE"
@@ -52,8 +55,8 @@ echo "=========================================="
 echo "Gateway Token: $GATEWAY_TOKEN"
 echo "=========================================="
 echo ""
-echo "Open: https://your-domain/?token=$GATEWAY_TOKEN"
-echo " or:  http://<ha-ip>:$PORT/?token=$GATEWAY_TOKEN"
+echo "Access via Home Assistant Ingress (Sidebar)"
+echo "or direct: http://<container-ip>:$PORT/?token=$GATEWAY_TOKEN"
 echo ""
 
-exec su openclaw -c "CLAWDBOT_GATEWAY_TOKEN='$GATEWAY_TOKEN' clawdbot gateway --bind lan --port $PORT --allow-unconfigured"
+exec su openclaw -c "CLAWDBOT_GATEWAY_TOKEN='$GATEWAY_TOKEN' clawdbot gateway --bind 0.0.0.0 --port $PORT --allow-unconfigured"

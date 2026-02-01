@@ -1,20 +1,19 @@
 name: "OpenClaw"
 description: "Personal AI assistant gateway"
-version: "1.0.6"
+version: "1.0.7"
 slug: "openclaw"
 arch:
   - amd64
 init: false
-host_network: true
+ingress: true
+ingress_port: 18789
+ingress_stream: true
+panel_icon: "mdi:robot"
+panel_title: "OpenClaw"
 map:
   - share:rw
 options:
-  port: 18789
-  trusted_proxies:
-    - "172.16.0.0/12"
-    - "192.168.0.0/16"
-    - "10.0.0.0/8"
+  trusted_proxies: []
 schema:
-  port: int
   trusted_proxies:
     - str
