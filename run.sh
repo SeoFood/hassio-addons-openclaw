@@ -59,4 +59,4 @@ echo "Access via Home Assistant Ingress (Sidebar)"
 echo "or direct: http://<container-ip>:$PORT/?token=$GATEWAY_TOKEN"
 echo ""
 
-exec su openclaw -c "CLAWDBOT_GATEWAY_TOKEN='$GATEWAY_TOKEN' clawdbot gateway --bind auto --port $PORT --allow-unconfigured"
+exec su openclaw -c "CLAWDBOT_GATEWAY_TOKEN='$GATEWAY_TOKEN' clawdbot gateway --bind lan --port $PORT --allow-unconfigured"
