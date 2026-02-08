@@ -67,7 +67,7 @@ jobs:
           tags: ${{ steps.meta.outputs.tags }}
           labels: ${{ steps.meta.outputs.labels }}
           build-args: |
-            BUILD_FROM=node:22-alpine
+            BUILD_FROM=node:22-slim
           cache-from: type=gha
           cache-to: type=gha,mode=max
           platforms: linux/amd64

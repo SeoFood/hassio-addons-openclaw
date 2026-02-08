@@ -1,36 +1,32 @@
 ARG BUILD_FROM
-FROM node:22-alpine
+FROM node:22-slim
 
-# Cache breaker - change this to force rebuild
 ARG BUILD_VERSION=1.0.0
 ENV BUILD_VERSION=${BUILD_VERSION}
 
-# Install system packages (Node.js already in base image for local dev)
-# For Home Assistant builds, install Node.js 22 from official binaries
-RUN apk add --no-cache \
+# Install system packages
+RUN apt-get update && apt-get install -y --no-install-recommends \
     git \
     curl \
     sudo \
     jq \
     bash \
-    shadow \
     chromium \
-    nss \
-    freetype \
-    harfbuzz \
     ca-certificates \
-    ttf-freefont \
-    && if ! command -v node >/dev/null 2>&1 || [ "$(node -v | cut -d. -f1 | tr -d v)" -lt 22 ]; then \
-        echo "Installing Node.js 22..." && \
-        curl -fsSL https://unofficial-builds.nodejs.org/download/release/v22.12.0/node-v22.12.0-linux-x64-musl.tar.gz | tar -xz -C /usr/local --strip-components=1; \
-    fi
+    cmake \
+    make \
+    g++ \
+    && rm -rf /var/lib/apt/lists/*
 
 # Create openclaw user
-RUN adduser -D -s /bin/bash -u 1001 openclaw \
+RUN useradd -m -s /bin/bash -u 1001 openclaw \
     && echo "openclaw ALL=(ALL) NOPASSWD:ALL" >> /etc/sudoers
 
 # Install openclaw and Claude CLI globally
 RUN npm install -g openclaw@latest @anthropic-ai/claude-code
+
+# Remove build tools to reduce image size
+RUN apt-get purge -y cmake make g++ && apt-get autoremove -y
 
 # Create data directories
 RUN mkdir -p /share/openclaw \
@@ -38,7 +34,7 @@ RUN mkdir -p /share/openclaw \
 
 # Set Puppeteer to use system Chromium
 ENV PUPPETEER_SKIP_CHROMIUM_DOWNLOAD=true
-ENV PUPPETEER_EXECUTABLE_PATH=/usr/bin/chromium-browser
+ENV PUPPETEER_EXECUTABLE_PATH=/usr/bin/chromium
 
 # Copy startup script
 COPY run.sh /run.sh
