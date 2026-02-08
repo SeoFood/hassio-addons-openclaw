@@ -26,30 +26,13 @@ else
     chown openclaw:openclaw "$TOKEN_FILE"
 fi
 
-# Read trusted proxies from addon options (default: empty)
-TRUSTED_PROXIES=$(jq -c '.trusted_proxies // []' /data/options.json)
-
-# Add Home Assistant Supervisor proxy network to trusted proxies
-TRUSTED_PROXIES=$(echo "$TRUSTED_PROXIES" | jq '. + ["172.30.32.0/23"]')
-
-# Get ingress path from Supervisor API
-INGRESS_ENTRY=""
-if [ -n "$SUPERVISOR_TOKEN" ]; then
-    INGRESS_ENTRY=$(curl -s http://supervisor/addons/self/info \
-        -H "Authorization: Bearer $SUPERVISOR_TOKEN" | jq -r '.data.ingress_entry // empty')
-    echo "Ingress path: $INGRESS_ENTRY"
-fi
-
-# Create/update config with trusted proxies
+# Config erstellen oder Trusted Proxies sicherstellen
 if [ ! -f "$CONFIG_FILE" ]; then
-    jq -n --argjson proxies "$TRUSTED_PROXIES" \
-        '{gateway: {trustedProxies: $proxies, controlUi: {allowInsecureAuth: true}}}' > "$CONFIG_FILE"
+    jq -n '{gateway: {trustedProxies: ["172.30.32.0/23"], controlUi: {allowInsecureAuth: true}}}' > "$CONFIG_FILE"
     chown openclaw:openclaw "$CONFIG_FILE"
 else
-    jq --argjson proxies "$TRUSTED_PROXIES" \
-        '.gateway.trustedProxies = $proxies | .gateway.controlUi.allowInsecureAuth = true | del(.gateway.controlUi.basePath)' \
+    jq '.gateway.trustedProxies = ["172.30.32.0/23"] | .gateway.controlUi.allowInsecureAuth = true' \
         "$CONFIG_FILE" > "$CONFIG_FILE.tmp" && mv "$CONFIG_FILE.tmp" "$CONFIG_FILE"
-    chown openclaw:openclaw "$CONFIG_FILE"
 fi
 
 # Environment
@@ -60,6 +43,20 @@ export OPENCLAW_GATEWAY_TOKEN=$GATEWAY_TOKEN
 # Chromium für Puppeteer
 export PUPPETEER_SKIP_CHROMIUM_DOWNLOAD=true
 export PUPPETEER_EXECUTABLE_PATH=/usr/bin/chromium-browser
+
+# Onboarding-Check
+AUTH_PROFILES=$DATA_DIR/auth-profiles.json
+if [ ! -f "$AUTH_PROFILES" ] || [ "$(jq 'length' "$AUTH_PROFILES" 2>/dev/null)" = "0" ]; then
+    echo "=========================================="
+    echo "Kein Onboarding gefunden!"
+    echo "Führe das Onboarding aus:"
+    echo ""
+    echo "  1. HA Terminal/SSH Addon öffnen"
+    echo "  2. docker exec -it \$(hostname) su openclaw -c \"openclaw onboard\""
+    echo "  3. Danach dieses Addon neu starten"
+    echo "=========================================="
+    echo ""
+fi
 
 # Gateway starten
 echo "=========================================="

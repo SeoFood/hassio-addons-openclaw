@@ -7,8 +7,20 @@
 1. Dieses Repository als Add-on-Repository in Home Assistant hinzufügen
 2. **OpenClaw** Add-on installieren
 3. Add-on starten
-4. Gateway-Token aus dem Add-on-Log kopieren
-5. Control-UI öffnen: `http://<deine-ha-ip>:18789/?token=<token>`
+
+## Ersteinrichtung (Onboarding)
+
+Beim ersten Start muss das Onboarding durchgeführt werden. Dabei wählst du deinen AI-Provider und die Auth-Methode (API-Key, OAuth, etc.).
+
+1. Add-on starten — das Log zeigt eine Onboarding-Anleitung
+2. **Terminal/SSH Add-on** öffnen und den Onboarding-Wizard starten:
+   ```bash
+   docker exec -it $(hostname) su openclaw -c "openclaw onboard"
+   ```
+3. Den Anweisungen folgen: Provider wählen (Anthropic, OpenAI, Google, Ollama, ...) und Auth-Methode konfigurieren
+4. Add-on neu starten
+
+Nach dem Onboarding ist die Control-UI voll funktionsfähig.
 
 ## Zugang
 
@@ -21,11 +33,7 @@ Das Gateway-Token wird beim ersten Start generiert und im Add-on-Log angezeigt. 
 
 ## Konfiguration
 
-| Option | Standard | Beschreibung |
-|--------|----------|--------------|
-| `trusted_proxies` | `[]` | Zusätzliche Trusted-Proxy-Netzwerke (das HA-Supervisor-Netzwerk wird automatisch hinzugefügt) |
-
-Alle weiteren Einstellungen (API-Keys, Channels, Agents) konfigurierst du direkt in der OpenClaw Control-UI.
+Provider und Auth-Profile werden beim Onboarding eingerichtet. Channels, Agents und weitere Einstellungen konfigurierst du in der OpenClaw Control-UI.
 
 ## Daten
 
