@@ -40,6 +40,42 @@ if [ -n "$SUPERVISOR_TOKEN" ]; then
     echo "Ingress path: $INGRESS_ENTRY"
 fi
 
+# Patch Control UI: inject script to fix WebSocket URL for HA Ingress
+# The Control UI constructs ws(s)://location.host without path, which bypasses Ingress.
+# This script detects Ingress access and sets the correct gatewayUrl in localStorage.
+if [ -n "$INGRESS_ENTRY" ]; then
+    GLOBAL_MODULES=$(node -e "console.log(require('path').resolve(process.execPath, '../../lib/node_modules'))" 2>/dev/null)
+    UI_HTML="$GLOBAL_MODULES/clawdbot/dist/control-ui/index.html"
+    if [ ! -f "$UI_HTML" ]; then
+        echo "Warning: Control UI index.html not found at $UI_HTML"
+    elif grep -q hassio_ingress "$UI_HTML"; then
+        echo "Control UI already patched for Ingress"
+    else
+        cat > /tmp/patch-ui.js <<'PATCH_SCRIPT'
+const fs = require('fs');
+const file = process.argv[2];
+const html = fs.readFileSync(file, 'utf8');
+const fix = [
+  '<script>(function(){',
+  'if(location.pathname.indexOf("/api/hassio_ingress/")!==0)return;',
+  'var parts=location.pathname.split("/");',
+  'if(parts.length<4||!parts[3])return;',
+  'var base="/"+parts[1]+"/"+parts[2]+"/"+parts[3];',
+  'try{',
+  'var s=JSON.parse(localStorage.getItem("clawdbot.control.settings.v1")||"{}");',
+  'var p=location.protocol==="https:"?"wss":"ws";',
+  's.gatewayUrl=p+"://"+location.host+base;',
+  'localStorage.setItem("clawdbot.control.settings.v1",JSON.stringify(s));',
+  '}catch(e){}',
+  '})();</script>',
+].join('');
+fs.writeFileSync(file, html.replace('</head>', fix + '</head>'));
+PATCH_SCRIPT
+        node /tmp/patch-ui.js "$UI_HTML" && echo "Patched Control UI: WebSocket URL fix for Ingress injected"
+        rm -f /tmp/patch-ui.js
+    fi
+fi
+
 # Create/update config with trusted proxies
 if [ ! -f "$CONFIG_FILE" ]; then
     jq -n --argjson proxies "$TRUSTED_PROXIES" \

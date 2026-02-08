@@ -1,6 +1,6 @@
 name: "OpenClaw"
 description: "Personal AI assistant gateway"
-version: "1.0.10"
+version: "1.0.11"
 slug: "openclaw"
 arch:
   - amd64
