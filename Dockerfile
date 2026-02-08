@@ -29,8 +29,8 @@ RUN apk add --no-cache \
 RUN adduser -D -s /bin/bash -u 1001 openclaw \
     && echo "openclaw ALL=(ALL) NOPASSWD:ALL" >> /etc/sudoers
 
-# Install clawdbot and Claude CLI globally
-RUN npm install -g clawdbot@latest @anthropic-ai/claude-code
+# Install openclaw and Claude CLI globally
+RUN npm install -g openclaw@latest @anthropic-ai/claude-code
 
 # Create data directories
 RUN mkdir -p /share/openclaw \

@@ -1,30 +1,32 @@
 # OpenClaw Home Assistant Add-on
 
-Personal AI assistant gateway.
+[OpenClaw](https://openclaw.ai/) als Home Assistant Add-on. Läuft im Host-Netzwerk, sodass die Control-UI inkl. WebSocket direkt erreichbar ist.
 
 ## Installation
 
-1. Repository zu Home Assistant hinzufügen
-2. OpenClaw Add-on installieren
+1. Dieses Repository als Add-on-Repository in Home Assistant hinzufügen
+2. **OpenClaw** Add-on installieren
 3. Add-on starten
-4. Web-UI öffnen unter `http://<deine-ha-ip>:3008`
-5. Onboarding in der Web-UI durchführen
+4. Gateway-Token aus dem Add-on-Log kopieren
+5. Control-UI öffnen: `http://<deine-ha-ip>:18789/?token=<token>`
+
+## Zugang
+
+| Methode | URL |
+|---------|-----|
+| Direkt  | `http://<deine-ha-ip>:18789/?token=<token>` |
+| Sidebar | Automatisch als Panel "OpenClaw" verfügbar |
+
+Das Gateway-Token wird beim ersten Start generiert und im Add-on-Log angezeigt. Es bleibt bei Neustarts erhalten.
 
 ## Konfiguration
 
 | Option | Standard | Beschreibung |
 |--------|----------|--------------|
-| port   | 3008     | Gateway-Port |
+| `trusted_proxies` | `[]` | Zusätzliche Trusted-Proxy-Netzwerke (das HA-Supervisor-Netzwerk wird automatisch hinzugefügt) |
 
-Alle weiteren Einstellungen (API-Keys, Auth, Channels) konfigurierst du direkt in Clawdbot beim Onboarding oder später über die Web-UI.
-
-## Zugang
-
-Nach dem Onboarding erreichbar unter:
-- `http://<deine-ha-ip>:3008`
-
-Für externen Zugang empfohlen: Reverse Proxy (z.B. Nginx Proxy Manager) mit eigener Auth davor.
+Alle weiteren Einstellungen (API-Keys, Channels, Agents) konfigurierst du direkt in der OpenClaw Control-UI.
 
 ## Daten
 
-Persistent in `/share/openclaw/` - bleibt bei Updates erhalten.
+Persistent in `/share/openclaw/` — bleibt bei Add-on-Updates erhalten.
