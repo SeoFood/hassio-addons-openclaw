@@ -16,5 +16,9 @@ panel_icon: "mdi:robot"
 panel_title: "OpenClaw"
 map:
   - share:rw
-options: {}
-schema: {}
+options:
+  provider: ""
+  api_key: ""
+schema:
+  provider: "list(anthropic|openai|google|ollama|openrouter|)?"
+  api_key: "password?"
