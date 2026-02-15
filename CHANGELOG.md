@@ -1,5 +1,11 @@
 # Changelog
 
+## [2.0.1] - 2026-02-15
+
+### Fixed
+- Fixed Control UI sessions failing with `missing scope: operator.read` after HTTP token login when `gateway.controlUi.allowInsecureAuth=true`.
+- Added a build-time patch for current OpenClaw `gateway-cli` dist files so insecure Control UI auth keeps declared operator scopes.
+
 ## [2.0.0] - 2026-02-15
 
 ### Changed

@@ -1,7 +1,7 @@
 ARG BUILD_FROM
 FROM node:22-slim
 
-ARG BUILD_VERSION=2.0.0
+ARG BUILD_VERSION=2.0.1
 ENV BUILD_VERSION=${BUILD_VERSION}
 
 # Install system packages
@@ -18,6 +18,11 @@ RUN useradd -m -s /bin/bash -u 1001 openclaw
 
 # Install OpenClaw
 RUN npm install -g openclaw@latest
+
+# Patch current OpenClaw dist to preserve operator scopes when
+# allowInsecureAuth is used by the Control UI over HTTP.
+COPY scripts/patch-openclaw-control-ui-scopes.mjs /tmp/patch-openclaw-control-ui-scopes.mjs
+RUN node /tmp/patch-openclaw-control-ui-scopes.mjs && rm -f /tmp/patch-openclaw-control-ui-scopes.mjs
 
 # Create data directories
 RUN mkdir -p /share/openclaw /opt/ha-skill \
