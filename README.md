@@ -1,55 +1,58 @@
 # OpenClaw Home Assistant Add-on
 
-[OpenClaw](https://openclaw.ai/) als Home Assistant Add-on. Läuft im Host-Netzwerk, sodass die Control-UI inkl. WebSocket direkt erreichbar ist.
+Minimal OpenClaw add-on for Home Assistant with direct gateway access (no ingress).
 
 ## Installation
 
-1. Dieses Repository als Add-on-Repository in Home Assistant hinzufügen
-2. **OpenClaw** Add-on installieren
-3. Add-on starten
+1. Add this repository in Home Assistant under Add-on Store -> Repositories.
+2. Install the **OpenClaw** add-on.
+3. Start the add-on.
 
-## Ersteinrichtung (Onboarding)
+## Configuration
 
-### Option A: Über Addon-Optionen (empfohlen)
+Only one option is exposed:
 
-1. Add-on **Konfiguration** öffnen
-2. **Provider** auswählen (Anthropic, OpenAI, Google, Ollama, OpenRouter)
-3. **API-Key** eingeben
-4. Add-on starten — das Onboarding läuft automatisch
+| Option | Default | Description |
+|--------|---------|-------------|
+| `port` | `18789` | Gateway HTTP/WS port |
 
-Bei Änderung von Provider oder API-Key einfach die Optionen anpassen und das Add-on neu starten.
+## First start and access
 
-### Option B: Manuell via Terminal (für OAuth etc.)
+On first start, the add-on generates a persistent gateway token and logs it.
 
-1. Add-on starten
-2. **Terminal/SSH Add-on** öffnen und den Onboarding-Wizard starten:
-   ```bash
-   docker exec -it $(hostname) su openclaw -c "openclaw onboard"
-   ```
-3. Den Anweisungen folgen und Add-on neu starten
+- Open: `http://<HA-IP>:<port>/?token=<token>`
+- Example: `http://192.168.1.10:18789/?token=...`
 
-Nach dem Onboarding ist die Control-UI voll funktionsfähig.
+The token is stored in `/share/openclaw/.gateway-token` and survives restarts and updates.
 
-## Zugang
+## Pairing behavior
 
-| Methode | URL |
-|---------|-----|
-| Direkt  | `http://<deine-ha-ip>:18789/?token=<token>` |
-| Sidebar | Automatisch als Panel "OpenClaw" verfügbar |
+This add-on enables `gateway.controlUi.allowInsecureAuth=true` by default to reduce browser pairing friction on plain HTTP LAN access.
 
-Das Gateway-Token wird beim ersten Start generiert und im Add-on-Log angezeigt. Es bleibt bei Neustarts erhalten.
+- Control-UI pairing friction is reduced.
+- Channel pairing (for example WhatsApp QR, Telegram bot setup) still works normally.
 
-## Konfiguration
+## Onboarding
 
-| Option | Beschreibung |
-|--------|-------------|
-| `provider` | AI-Provider (anthropic, openai, google, ollama, openrouter) |
-| `api_key` | API-Key des Providers (wird maskiert angezeigt) |
+No automatic provider onboarding is done by the add-on.
 
-Beide Optionen sind optional. Ohne sie muss das Onboarding manuell via Terminal durchgeführt werden.
+If OpenClaw is not configured yet, run onboarding manually from a shell in the container:
 
-Channels, Agents und weitere Einstellungen konfigurierst du in der OpenClaw Control-UI.
+```bash
+su openclaw -c "openclaw onboard"
+```
 
-## Daten
+Then restart the add-on.
 
-Persistent in `/share/openclaw/` — bleibt bei Add-on-Updates erhalten.
+## Home Assistant API access
+
+The add-on keeps `hassio_api: true` and passes:
+
+- `HA_URL=http://supervisor/core`
+- `HA_TOKEN=$SUPERVISOR_TOKEN`
+
+This allows OpenClaw agents/tools to call Home Assistant APIs from inside the add-on container.
+
+## Data persistence
+
+All persistent state lives in `/share/openclaw/`.

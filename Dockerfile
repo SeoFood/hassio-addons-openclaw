@@ -1,40 +1,34 @@
 ARG BUILD_FROM
 FROM node:22-slim
 
-ARG BUILD_VERSION=1.0.0
+ARG BUILD_VERSION=2.0.0
 ENV BUILD_VERSION=${BUILD_VERSION}
 
 # Install system packages
 RUN apt-get update && apt-get install -y --no-install-recommends \
     git \
-    curl \
-    sudo \
     jq \
     bash \
     chromium \
     ca-certificates \
-    cmake \
-    make \
-    g++ \
     && rm -rf /var/lib/apt/lists/*
 
 # Create openclaw user
-RUN useradd -m -s /bin/bash -u 1001 openclaw \
-    && echo "openclaw ALL=(ALL) NOPASSWD:ALL" >> /etc/sudoers
+RUN useradd -m -s /bin/bash -u 1001 openclaw
 
-# Install openclaw and Claude CLI globally
-RUN npm install -g openclaw@latest @anthropic-ai/claude-code
-
-# Remove build tools to reduce image size
-RUN apt-get purge -y cmake make g++ && apt-get autoremove -y
+# Install OpenClaw
+RUN npm install -g openclaw@latest
 
 # Create data directories
-RUN mkdir -p /share/openclaw \
+RUN mkdir -p /share/openclaw /opt/ha-skill \
     && chown -R openclaw:openclaw /share/openclaw
 
 # Set Puppeteer to use system Chromium
 ENV PUPPETEER_SKIP_CHROMIUM_DOWNLOAD=true
 ENV PUPPETEER_EXECUTABLE_PATH=/usr/bin/chromium
+
+# Copy bundled Home Assistant skill
+COPY ha-skill /opt/ha-skill
 
 # Copy startup script
 COPY run.sh /run.sh

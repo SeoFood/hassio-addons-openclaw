@@ -1,24 +1,15 @@
 name: "OpenClaw"
 description: "Personal AI assistant gateway"
-version: "1.1.1"
+version: "2.0.0"
 slug: "openclaw"
 arch:
   - amd64
 host_network: true
 init: false
 hassio_api: true
-ingress: true
-ingress_port: 18789
-ingress_stream: true
-ports:
-  18789/tcp: 18789
-panel_icon: "mdi:robot"
-panel_title: "OpenClaw"
 map:
   - share:rw
 options:
-  provider: ""
-  api_key: ""
+  port: 18789
 schema:
-  provider: "list(anthropic|openai|google|ollama|openrouter|)?"
-  api_key: "password?"
+  port: int

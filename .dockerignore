@@ -13,6 +13,8 @@ LICENSE
 # Development files
 docker-compose.yml
 *.md
+!ha-skill/
+!ha-skill/SKILL.md
 
 # IDE
 .idea/
