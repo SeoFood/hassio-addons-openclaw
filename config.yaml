@@ -1,7 +1,8 @@
 name: "OpenClaw"
 description: "Personal AI assistant gateway"
-version: "2.0.1"
+version: "2.0.2"
 slug: "openclaw"
+image: "ghcr.io/seofood/openclaw"
 arch:
   - amd64
 host_network: true

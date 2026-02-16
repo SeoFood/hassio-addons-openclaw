@@ -8,6 +8,13 @@ Minimal OpenClaw add-on for Home Assistant with direct gateway access (no ingres
 2. Install the **OpenClaw** add-on.
 3. Start the add-on.
 
+## Image distribution
+
+This add-on is published as a prebuilt GHCR image (`ghcr.io/seofood/openclaw`).
+
+- Home Assistant pulls versioned images on update.
+- Local rebuilds during add-on updates are avoided.
+
 ## Configuration
 
 Only one option is exposed:

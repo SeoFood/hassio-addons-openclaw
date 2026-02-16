@@ -1,5 +1,12 @@
 # Changelog
 
+## [2.0.2] - 2026-02-16
+
+### Changed
+- Added `gh` (GitHub CLI) to the add-on container image.
+- Switched the add-on to use a prebuilt image from GHCR via `config.yaml` (`image: ghcr.io/seofood/openclaw`) so Home Assistant updates can pull instead of rebuilding locally.
+- Made the Control-UI scope patch step non-blocking by default when upstream OpenClaw dist layouts change.
+
 ## [2.0.1] - 2026-02-15
 
 ### Fixed

@@ -2,6 +2,7 @@ import { readdirSync, readFileSync, writeFileSync } from "node:fs";
 import { join } from "node:path";
 
 const distDir = "/usr/local/lib/node_modules/openclaw/dist";
+const strictMode = process.env.OPENCLAW_PATCH_SCOPES_STRICT === "1";
 const files = readdirSync(distDir).filter(
   (name) => name.startsWith("gateway-cli-") && name.endsWith(".js"),
 );
@@ -42,9 +43,12 @@ for (const file of files) {
 }
 
 if (patched === 0 && alreadyPatched === 0) {
-  throw new Error(
-    "Could not patch OpenClaw gateway scope block. Upstream dist layout changed.",
-  );
+  const message =
+    "Could not patch OpenClaw gateway scope block. Upstream dist layout changed.";
+  if (strictMode) {
+    throw new Error(message);
+  }
+  console.warn(`warn: ${message} Continuing without patch.`);
 }
 
 console.log(`patched=${patched} already_patched=${alreadyPatched}`);

@@ -1,7 +1,7 @@
 ARG BUILD_FROM
 FROM node:22-slim
 
-ARG BUILD_VERSION=2.0.1
+ARG BUILD_VERSION=2.0.2
 ENV BUILD_VERSION=${BUILD_VERSION}
 
 # Install system packages
@@ -10,6 +10,7 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
     jq \
     bash \
     chromium \
+    gh \
     ca-certificates \
     && rm -rf /var/lib/apt/lists/*
 
